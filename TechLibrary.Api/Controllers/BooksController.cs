@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TechLibrary.Api.UseCases.Books.Filter;
+using TechLibrary.Application.UseCases.Books.Filter;
 using TechLibrary.Communication.Requests;
 using TechLibrary.Communication.Responses;
 
@@ -10,11 +10,11 @@ public class BooksController : ControllerBase
 {
     [HttpGet("Filter")]
     [ProducesResponseType(typeof(ResponseBooksJson), StatusCodes.Status200OK)]
-    public IActionResult Filter(int pageNumber, string? title)
+    public async Task<IActionResult> Filter(
+        [FromServices] IFilterBooksUseCase useCase,
+        [FromQuery] int pageNumber, [FromQuery] string? title)
     {
-        var useCase = new FilterBooksUseCase();
-
-        var result = useCase.Execute(new RequestFilterBooksJson
+        var result = await useCase.Execute(new RequestFilterBooksJson
         {
             PageNumber = pageNumber,
             Title = title

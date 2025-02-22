@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using TechLibrary.Api.Services.LoggedUser;
-using TechLibrary.Api.UseCases.Checkouts.Register;
+using TechLibrary.Application.UseCases.Checkouts.Register;
 
 namespace TechLibrary.Api.Controllers;
 
@@ -13,12 +11,10 @@ public class CheckoutsController : ControllerBase
 {
     [HttpPost]
     [Route("{bookId}")]
-    public IActionResult BookCheckout(Guid bookId)
+    public async Task<IActionResult> BookCheckout([FromServices] IRegisterBookCheckoutUseCase useCase,
+        [FromRoute] Guid bookId)
     {
-        var loggedUser = new LoggedUserService(HttpContext);
-
-        var useCase = new RegisterBookCheckoutUseCase(loggedUser);
-        useCase.Execute(bookId);
+        await useCase.Execute(bookId);
 
         return NoContent();
     }
