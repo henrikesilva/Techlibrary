@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TechLibrary.Api.UseCases.Login.DoLogin;
+using TechLibrary.Application.UseCases.Login.DoLogin;
 using TechLibrary.Communication.Requests;
 using TechLibrary.Communication.Responses;
 
@@ -12,11 +12,10 @@ public class LoginController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ResponseRegisteredUserJson), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseErrorMessagesJson), StatusCodes.Status401Unauthorized)]
-    public IActionResult DoLogin(RequestLoginJson request)
+    public async Task<IActionResult> DoLogin([FromServices] IDoLoginUseCase useCase,
+        [FromBody] RequestLoginJson request)
     {
-        var useCase = new DoLoginUseCase();
-
-        var response = useCase.Execute(request);
+        var response = await useCase.Execute(request);
 
         return Ok(response);
     }
